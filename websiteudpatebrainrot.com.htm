@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MÉTODO MOREIRA — Fase Beta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0c10;          /* page background */
+      --panel:#12131a;       /* cards & sections */
+      --accent:#ff4040;      /* primary red */
+      --text:#e9edf1;        /* primary text */
+      --muted:#a7adba;       /* secondary text */
+      --ring: rgba(255,64,64,.45); /* focus ring */
+      --card-radius: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --inner-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 1px 0 rgba(0,0,0,.35);
+      --gradient: radial-gradient(1200px 400px at 50% -10%, rgba(255,64,64,.08), transparent 40%),
+                  radial-gradient(800px 300px at 90% 0%, rgba(61,220,151,.05), transparent 40%);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      background:var(--bg);
+      background-image:var(--gradient);
+    }
+
+    .container{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+
+    /* Header */
+    .brand{display:flex; align-items:center; gap:14px; justify-content:center; flex-wrap:wrap; padding:28px 0 10px}
+    .brand .logo{width:40px; height:40px; border-radius:12px; background:linear-gradient(145deg,#ff6f61,#ff4040); box-shadow:0 6px 18px rgba(255,64,64,.4), inset 0 1px 0 rgba(255,255,255,.2); display:grid; place-items:center; font-weight:800}
+    .brand h1{margin:0; font-weight:800; letter-spacing:.6px; text-transform:uppercase; text-align:center; font-size: clamp(22px, 2.1vw + 12px, 40px); background:linear-gradient(180deg,#fff, #ffdddd 60%, #ffd1d1 100%); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:0 6px 24px rgba(255,64,64,.25)}
+    .subtitle{color:var(--muted); text-align:center; letter-spacing:.12em; text-transform:uppercase; font-weight:600; margin-top:6px}
+
+    /* Grid */
+    .grid{display:grid; gap:16px; margin-top:22px; grid-template-columns:repeat(12,1fr)}
+    .card{grid-column: span 4; background:linear-gradient(180deg, #13141c, #0f1016); border-radius: var(--card-radius); box-shadow: var(--shadow), var(--inner-shadow); padding:16px; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.04); transition: transform .16s ease, box-shadow .16s ease, border-color .2s ease; cursor:pointer; isolation:isolate; display:flex; flex-direction:column}
+    .card:hover{ transform: translateY(-2px); box-shadow:0 16px 36px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06) inset; border-color:rgba(255,255,255,.09) }
+    .card.selected{ outline:3px solid var(--ring); box-shadow:0 0 0 3px var(--ring), var(--shadow)}
+
+    /* BIG & UNIFORM image box */
+    .thumb{ height:260px; border-radius:14px; background:#0f1118; display:grid; place-items:center; overflow:hidden; border:1px solid rgba(255,255,255,.06); padding:10px }
+    .thumb img{ width:100%; height:100%; object-fit:contain; display:block }
+
+    .card-footer{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px}
+    .title{font-weight:700; font-size:15px; letter-spacing:.2px}
+
+    .pill{display:inline-flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); background:rgba(255,255,255,.03); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.06)}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--accent); box-shadow:0 0 0 3px rgba(255,64,64,.25)}
+
+    /* Toolbar */
+    .toolbar{display:flex; gap:12px; align-items:center; justify-content:center; margin:22px 0 6px}
+    .btn{--pad-x:18px; --pad-y:12px; appearance:none; border:none; outline:none; cursor:pointer; padding:var(--pad-y) var(--pad-x); border-radius:12px; font-weight:700; letter-spacing:.2px; background:linear-gradient(180deg, var(--accent), #e63434); color:white; box-shadow:0 10px 24px rgba(255,64,64,.35); transition: transform .14s ease, box-shadow .14s ease, filter .2s ease}
+    .btn:disabled{opacity:.5; filter:grayscale(.2); cursor:not-allowed; box-shadow:none}
+    .btn:hover:not(:disabled){ transform:translateY(-1px); box-shadow:0 14px 28px rgba(255,64,64,.45)}
+
+    /* Live Servers */
+    .section{background:linear-gradient(180deg, #13141c, #0f1016); border:1px solid rgba(255,255,255,.05); border-radius:20px; box-shadow:var(--shadow); padding:18px; margin-top:18px}
+    .section h3{margin:0 0 12px;font-size:13px; letter-spacing:.3em; color:var(--muted); text-transform:uppercase}
+
+    .table{width:100%; border-collapse:separate; border-spacing:0 10px}
+    .row{display:grid; grid-template-columns:2fr 1fr auto; gap:14px; align-items:center; background:#0f1118; padding:14px 14px; border-radius:14px; border:1px solid rgba(255,255,255,.05)}
+    .row .name{font-weight:600}
+    .latency{font-weight:700; font-variant-numeric:tabular-nums; color:#e9edf1}
+    .latency.bad{color:#ffb4b4}
+    .latency.good{color:#c0ffd7}
+    .row .join{justify-self:end}
+    .btn-outline{background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.12); box-shadow:none; padding:10px 14px; border-radius:12px}
+    .btn-outline:hover{border-color:rgba(255,255,255,.25)}
+
+    /* Responsive */
+    @media (max-width: 980px){ .card{grid-column: span 6} .row{grid-template-columns: 1.5fr 1fr auto} }
+    @media (max-width: 640px){ .card{grid-column: span 12} .toolbar{justify-content:stretch} .btn{width:100%} .row{grid-template-columns: 1fr; gap:10px} .row .join{justify-self:stretch} .btn-outline{width:100%} }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="brand">
+      <div class="logo">🔥</div>
+      <h1>MÉTODO MOREIRA / MOREIRA METHOD V2</h1>
+    </div>
+    <div class="subtitle">FASE BETA — Elige tu servidor / Choose your server </div>
+
+    <!-- Grid of server cards -->
+    <div class="grid" id="serverGrid">
+      <article class="card" data-name="Los Bros">
+        <div class="thumb">
+          <img alt="Los Bros" src="https://static.wikia.nocookie.net/stealabr/images/5/53/BROOOOOOOO.png/revision/latest?cb=20250909152032">
+        </div>
+        <footer class="card-footer">
+          <div class="title">Los Bros</div>
+          <div class="pill"><span class="dot"></span><span class="mins">—</span></div>
+        </footer>
+      </article>
+
+      <article class="card" data-name="Las Sis">
+        <div class="thumb">
+          <img alt="Las Sis" src="https://static.wikia.nocookie.net/stealabr/images/e/e8/Las_Sis.png/revision/latest?cb=20250914042020">
+        </div>
+        <footer class="card-footer">
+          <div class="title">Las Sis</div>
+          <div class="pill"><span class="dot"></span><span class="mins">—</span></div>
+        </footer>
+      </article>
+
+      <article class="card" data-name="Chillin Chili">
+        <div class="thumb">
+          <img alt="Chillin Chili" src="https://static.wikia.nocookie.net/stealabr/images/e/e0/Chilin.png/revision/latest?cb=20251006204612">
+        </div>
+        <footer class="card-footer">
+          <div class="title">Chillin Chili
+</div>
+          <div class="pill"><span class="dot"></span><span class="mins">—</span></div>
+        </footer>
+      </article>
+
+      <article class="card" data-name="Garama and Madundung">
+        <div class="thumb">
+          <img alt="Garama and Madundung" src="https://static.wikia.nocookie.net/stealabr/images/e/ee/Garamadundung.png/revision/latest?cb=20250816022557">
+        </div>
+        <footer class="card-footer">
+          <div class="title">Garama and Madundung</div>
+          <div class="pill"><span class="dot"></span><span class="mins">—</span></div>
+        </footer>
+      </article>
+
+      <article class="card" data-name="Spaghetti Tualetti">
+        <div class="thumb">
+          <img alt="Spaghetti Tualetti" src="https://static.wikia.nocookie.net/stealabr/images/b/b8/Spaghettitualetti.png/revision/latest?cb=20250928162127">
+        </div>
+        <footer class="card-footer">
+          <div class="title">Spaghetti Tualetti</div>
+          <div class="pill"><span class="dot"></span><span class="mins">—</span></div>
+        </footer>
+      </article>
+
+      <article class="card" data-name="Secret Combination">
+        <div class="thumb">
+          <img alt="Secret Combination" src="https://static.wikia.nocookie.net/stealabr/images/f/f2/Lasecretcombinasion.png/revision/latest?cb=20251006044448">
+        </div>
+        <footer class="card-footer">
+          <div class="title">Secret Combination</div>
+          <div class="pill"><span class="dot"></span><span class="mins">—</span></div>
+        </footer>
+      </article>
+
+      <article class="card" data-name="Dragon Cannelloni">
+        <div class="thumb">
+          <img alt="Dragon Cannelloni" src="https://static.wikia.nocookie.net/stealabr/images/0/02/Dragoncanneloni.png/revision/latest?cb=20251006140921">
+        </div>
+        <footer class="card-footer">
+          <div class="title">Dragon Cannelloni</div>
+          <div class="pill"><span class="dot"></span><span class="mins">—</span></div>
+        </footer>
+      </article>
+
+      <article class="card" data-name="Burguro And Fryuro">
+        <div class="thumb">
+          <img alt="Burguro And Fryuro" src="https://static.wikia.nocookie.net/stealabr/images/6/65/Burguro-And-Fryuro.png/revision/latest?cb=20251007133840">
+        </div>
+        <footer class="card-footer">
+          <div class="title">Burguro And Fryuro</div>
+          <div class="pill"><span class="dot"></span><span class="mins">—</span></div>
+        </footer>
+      </article>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <button class="btn" id="goBtn" disabled>Go to Server / Ir al servidor</button>
+    </div>
+
+    <!-- Live servers section (example) -->
+    <section class="section">
+      <h3>Servers en vivo / Live servers</h3>
+      <div class="table" id="liveTable">
+           <div class="row">
+          <div class="name">Secret Combination</div>
+          <div class="latency bad">12.65 ms</div>
+          <button class="btn btn-outline join">Join</button>
+        </div>
+        <div class="row">
+          <div class="name">La Grande Combination</div>
+          <div class="latency bad">103.04 ms</div>
+          <button class="btn btn-outline join">Join</button>
+        </div>
+         <div class="row">
+          <div class="name">Garama and Madundung </div>
+          <div class="latency bad">9.46 ms</div>
+          <button class="btn btn-outline join">Join</button>
+        </div>
+         <div class="row">
+          <div class="name">Los Bros</div>
+          <div class="latency bad">27.93 ms</div>
+          <button class="btn btn-outline join">Join</button>
+        </div>
+        <div class="row">
+          <div class="name">Burguro And Fryuro</div>
+          <div class="latency bad">10.84 ms</div>
+          <button class="btn btn-outline join">Join</button>
+        </div>
+        <div class="row">
+          <div class="name">Keflouru and Moutary</div>
+          <div class="latency">42.03 ms</div>
+          <button class="btn btn-outline join">Join</button>
+        </div>
+        <div class="row">
+          <div class="name">Los Trakelantes</div>
+          <div class="latency good">2.04 ms</div>
+          <button class="btn btn-outline join">Join</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Select a card -> enable button
+    const grid = document.getElementById('serverGrid');
+    const goBtn = document.getElementById('goBtn');
+    let selectedName = null;
+
+    grid.addEventListener('click', (e)=>{
+      const card = e.target.closest('.card');
+      if(!card) return;
+      grid.querySelectorAll('.card.selected').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedName = card.dataset.name || card.querySelector('.title')?.textContent?.trim();
+      goBtn.disabled = false;
+      goBtn.textContent = `Go to ${selectedName} / Ir a ${selectedName}`;
+    });
+
+    // Force all servers to show Live / En vivo and green dot
+document.querySelectorAll('.card .mins').forEach(span=>{
+  const mins = Math.floor(Math.random()*59)+1;
+  span.textContent = `Live • ${mins} mins`;
+});
+
+// Turn the dot green for all
+document.querySelectorAll('.dot').forEach(dot=>{
+  dot.style.background = '#3ddc97'; // same green used elsewhere
+  dot.style.boxShadow = '0 0 0 3px rgba(61,220,151,0.3)';
+});
+
+    // Color latencies
+    document.querySelectorAll('.latency').forEach(el=>{
+      const n = parseFloat(el.textContent);
+      if(!isNaN(n)){
+        el.classList.toggle('good', n <= 10);
+        el.classList.toggle('bad', n >= 80);
+      }
+    });
+  </script>
+</body>
+</html>
