@@ -154,6 +154,17 @@
           <div class="pill"><span class="dot"></span><span class="mins">—</span></div>
         </footer>
       </article>
+      
+      <!-- New brainrot Ketupat Kepat -->
+      <article class="card" data-name="Ketupat Kepat">
+        <div class="thumb">
+          <img alt="Ketupat Kepat" src="KetupatKepat.webp">
+        </div>
+        <footer class="card-footer">
+          <div class="title">Ketupat Kepat</div>
+          <div class="pill"><span class="dot"></span><span class="mins">—</span></div>
+        </footer>
+      </article>
     </div>
 
     <!-- Toolbar -->
@@ -205,37 +216,44 @@
   </div>
 
   <script>
+    const robloxShareLink = "https://www.roblox.com/share?code=cc2dc99f101a06419ff2fa1d14226a2f&type=Server";
+
     // Select a card -> enable button
     const grid = document.getElementById('serverGrid');
     const goBtn = document.getElementById('goBtn');
     let selectedName = null;
 
-    grid.addEventListener('click', (e)=>{
+    grid.addEventListener('click', (e) => {
       const card = e.target.closest('.card');
-      if(!card) return;
-      grid.querySelectorAll('.card.selected').forEach(c=>c.classList.remove('selected'));
+      if (!card) return;
+      grid.querySelectorAll('.card.selected').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       selectedName = card.dataset.name || card.querySelector('.title')?.textContent?.trim();
       goBtn.disabled = false;
       goBtn.textContent = `Go to ${selectedName} / Ir a ${selectedName}`;
     });
 
+    // Open Roblox link on button click
+    goBtn.addEventListener('click', () => {
+      window.open(robloxShareLink, '_blank');
+    });
+
     // Force all servers to show Live / En vivo and green dot
-    document.querySelectorAll('.card .mins').forEach(span=>{
-      const mins = Math.floor(Math.random()*59)+1;
+    document.querySelectorAll('.card .mins').forEach(span => {
+      const mins = Math.floor(Math.random() * 59) + 1;
       span.textContent = `Live • ${mins} mins`;
     });
 
     // Turn the dot green for all
-    document.querySelectorAll('.dot').forEach(dot=>{
+    document.querySelectorAll('.dot').forEach(dot => {
       dot.style.background = '#3ddc97';
       dot.style.boxShadow = '0 0 0 3px rgba(61,220,151,0.3)';
     });
 
     // Color latencies
-    document.querySelectorAll('.latency').forEach(el=>{
+    document.querySelectorAll('.latency').forEach(el => {
       const n = parseFloat(el.textContent);
-      if(!isNaN(n)){
+      if (!isNaN(n)) {
         el.classList.toggle('good', n <= 10);
         el.classList.toggle('bad', n >= 80);
       }
